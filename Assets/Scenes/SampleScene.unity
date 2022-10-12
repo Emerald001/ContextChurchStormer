@@ -905,13 +905,13 @@ MonoBehaviour:
   positions: []
   Angles: []
   player: {fileID: 1433803272}
-  exclamationPoint: {fileID: 0}
-  speed: 0
-  rotSpeed: 0
-  walkingRange: 0
-  viewDis: 0
-  viewAngle: 0
-  waitTime: 0
+  exclamationPoint: {fileID: 1236899317}
+  speed: 5
+  rotSpeed: 360
+  walkingRange: 10
+  viewDis: 10
+  viewAngle: 20
+  waitTime: 5
 --- !u!1 &2083223674
 GameObject:
   m_ObjectHideFlags: 0
