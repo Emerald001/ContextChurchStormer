@@ -8,12 +8,12 @@ public class EnemyIdleState : EnemyState {
     public float waitTime;
     public float currentTime;
 
+    public Transform[] positions;
     public int index;
-    Vector3[] angles;
 
-    public EnemyIdleState(StateMachine<EnemyAI> stateMachine, EnemyAI owner, float WaitTime, Vector3[] angles) : base(stateMachine, owner) {
+    public EnemyIdleState(StateMachine<EnemyAI> stateMachine, EnemyAI owner, float WaitTime, Transform[] positions) : base(stateMachine, owner) {
         waitTime = WaitTime;
-        this.angles = angles;
+        this.positions = positions;
     }
 
     public override void OnEnter() {
@@ -22,7 +22,7 @@ public class EnemyIdleState : EnemyState {
         currentTime = waitTime;
 
         index++;
-        if (index >= angles.Length)
+        if (index >= positions.Length)
             index = 0;
     }
 
@@ -33,7 +33,7 @@ public class EnemyIdleState : EnemyState {
     public override void OnUpdate() {
         base.OnUpdate();
 
-        owner.transform.eulerAngles = Vector3.MoveTowards(owner.transform.eulerAngles, angles[index], owner.rotSpeed * Time.deltaTime);
+        owner.transform.eulerAngles = Vector3.MoveTowards(owner.transform.eulerAngles, positions[index].eulerAngles, owner.rotSpeed * Time.deltaTime);
 
         if (WaitTimer(ref currentTime) < 0)
             IsDone = true;

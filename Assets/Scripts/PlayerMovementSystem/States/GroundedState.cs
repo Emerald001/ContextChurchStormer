@@ -31,8 +31,8 @@ public class GroundedState : MoveState {
             owner.animator.SetBool("Walking", false);
 
         //jump 
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            owner.animator.SetTrigger("Jump");
+        if (Input.GetKeyDown(KeyCode.Space) && !owner.evaluator.TouchedRoof()) {
+            owner.animator.SetBool("Jump", true);
             owner.velocity += new Vector3(0, Mathf.Sqrt(owner.jumpHeight * -2 * owner.gravity), 0);
         }
 

@@ -31,13 +31,16 @@ public class EnemyAIEvaluator
         float dotProduct = Vector3.Dot(dir, owner.transform.forward);
         if (dotProduct < Mathf.Cos(owner.viewAngle)) {
             if (Physics.Raycast(owner.transform.position + new Vector3(0, 1, 0), dir, out var hit, owner.viewDis)) {
-                if (hit.collider.CompareTag("Player") && Vector3.Distance(owner.transform.position, player.transform.position) < 2) {
-                    Debug.Log("Behind!");
+                if (hit.collider.CompareTag("Player") && Vector3.Distance(owner.transform.position, player.transform.position) < 1.5f) {
                     return true;
                 }
             }
         }
 
         return false;
+    }
+
+    public bool GotPlayer(GameObject player) {
+        return Vector3.Distance(owner.transform.position, player.transform.position) < .2f;
     }
 }

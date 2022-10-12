@@ -64,6 +64,7 @@ public class MovementManager : MonoBehaviour
         AddTransitionWithBool(groundedState, !evaluator.IsGrounded(), typeof(AirbornState));
         AddTransitionWithKey(groundedState, KeyCode.LeftControl, typeof(CrouchingState));
         AddTransitionWithKey(groundedState, KeyCode.LeftShift, typeof(SprintingState));
+        AddTransitionWithKey(groundedState, KeyCode.E, typeof(TakeDownState));
 
         var airbornState = new AirbornState(movementStateMachine);
         movementStateMachine.AddState(typeof(AirbornState), airbornState);
@@ -151,6 +152,10 @@ public class MovementManager : MonoBehaviour
         var goAroundCornerState = new GoAroundCornerState(movementStateMachine);
         movementStateMachine.AddState(typeof(GoAroundCornerState), goAroundCornerState);
         AddTransitionWithPrediquete(goAroundCornerState, (x) => { return goAroundCornerState.IsDone; }, typeof(LedgeGrabbingState));
+
+        var takeDownState = new TakeDownState(movementStateMachine);
+        movementStateMachine.AddState(typeof(TakeDownState), takeDownState);
+        AddTransitionWithPrediquete(takeDownState, (x) => { return takeDownState.IsDone; }, typeof(GroundedState));
 
         movementStateMachine.ChangeState(typeof(GroundedState));
     }

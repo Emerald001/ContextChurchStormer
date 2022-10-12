@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     public Transform[] positions;
-    public Vector3[] Angles;
     public GameObject player;
     public GameObject exclamationPoint;
     public GameObject takeDown;
@@ -22,13 +21,15 @@ public class EnemyAI : MonoBehaviour
     private StateMachine<EnemyAI> enemyStateMachine;
     private EnemyAIEvaluator evaluator;
 
+    private bool isAlive = true;
+
     void Start() {
         agent = GetComponent<NavMeshAgent>();
 
         enemyStateMachine = new StateMachine<EnemyAI>(this);
         evaluator = new EnemyAIEvaluator(this);
 
-        var IdleState = new EnemyIdleState(enemyStateMachine, this, waitTime, Angles);
+        var IdleState = new EnemyIdleState(enemyStateMachine, this, waitTime, positions);
         enemyStateMachine.AddState(typeof(EnemyIdleState), IdleState);
         AddTransitionWithPrediquete(IdleState, (x) => { return evaluator.PlayerSeen(player); } , typeof(PlayerCaptureState));
         AddTransitionWithPrediquete(IdleState, (x) => { return IdleState.IsDone; }, typeof(PatrolState));
@@ -46,17 +47,28 @@ public class EnemyAI : MonoBehaviour
     }
 
     void Update() {
+        if (!isAlive)
+            return;
+
         enemyStateMachine.OnUpdate();
 
         if (evaluator.PlayerBehind(player)) {
             takeDown.SetActive(true);
 
             if (Input.GetKeyDown(KeyCode.E)) {
-                Destroy(gameObject);
+                animator.SetTrigger("Dies");
+                agent.SetDestination(transform.position);
+                isAlive = false;
+                takeDown.SetActive(false);
             }
         }
         else {
             takeDown.SetActive(false);
+        }
+
+        if (evaluator.GotPlayer(player)) {
+            animator.SetBool("TakeDown", true);
+            Debug.Log("Lost");
         }
     }
 
@@ -79,9 +91,5 @@ public class EnemyAI : MonoBehaviour
     }
     public void AddTransitionWithPrediquete(State<EnemyAI> state, System.Predicate<EnemyAI> predicate, System.Type stateTo) {
         state.AddTransition(new Transition<EnemyAI>(predicate, stateTo));
-    }
-
-    public IEnumerator TakeDown() {
-        yield return new WaitForEndOfFrame();
     }
 }

@@ -14,7 +14,6 @@ public class AirbornState : MoveState {
         owner.lookAtMoveDir = true;
 
         owner.animator.SetBool("HangingFromEdge", false);
-        owner.animator.SetBool("Falling", true);
         doubleJumps = owner.jumpAmount;
     }
 
@@ -36,6 +35,11 @@ public class AirbornState : MoveState {
         owner.velocity.z = Mathf.Clamp(owner.velocity.z, -owner.maxSpeed, owner.maxSpeed);
 
         owner.velocity.y += owner.gravity * Time.deltaTime;
+
+        if(owner.velocity.y < 1f) {
+            owner.animator.SetBool("Jump", false);
+            owner.animator.SetBool("Falling", true);
+        }
 
         if(Input.GetKeyDown(KeyCode.Space) && doubleJumps > 0) {
             owner.velocity += new Vector3(0, Mathf.Sqrt((owner.jumpHeight / 2) * -2 * owner.gravity), 0);

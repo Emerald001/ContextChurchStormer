@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using TMPro;
 
 public class PlayerCaptureState : EnemyState {
 
     GameObject Player;
-    GameObject point;
+    TMP_Text point;
+    GameObject pointObject;
     NavMeshAgent agent;
 
     public float counter;
@@ -14,28 +16,30 @@ public class PlayerCaptureState : EnemyState {
     public PlayerCaptureState(StateMachine<EnemyAI> stateMachine, EnemyAI owner, GameObject Player, NavMeshAgent agent, GameObject point) : base(stateMachine, owner) {
         this.Player = Player;
         this.agent = agent;
-        this.point = point;
+        this.pointObject = point;
+        this.point = point.GetComponent<TMP_Text>();
     }
 
     public override void OnEnter() {
         agent.SetDestination(owner.transform.position);
         owner.transform.LookAt(Player.transform.position);
 
-        point.SetActive(true);
+        pointObject.SetActive(true);
         agent.speed = 5;
 
         owner.animator.SetBool("Looking", true);
     }
 
     public override void OnExit() {
-        point.SetActive(false);
+        pointObject.SetActive(false);
 
         agent.SetDestination(owner.transform.position);
         agent.speed = 3.5f;
 
-        point.transform.localScale = new Vector3(0.001f, .001f, .001f);
-        point.transform.localPosition = new Vector3(0, 2.8f, 0);
+        point.fontSize = 400;
         counter = 0;
+
+        agent.speed = 5;
 
         owner.animator.SetBool("Looking", false);
         owner.animator.SetBool("Sprinting", false);
@@ -44,13 +48,13 @@ public class PlayerCaptureState : EnemyState {
     public override void OnUpdate() {
         base.OnUpdate();
          
-        if (counter > 3) {
+        if (counter > 2) {
             owner.animator.SetBool("Sprinting", true);
             agent.SetDestination(Player.transform.position);
+            agent.speed = 15;
         }
         else {
-            point.transform.localScale = Vector3.Lerp(point.transform.localScale, new Vector3(.005f, .005f, .005f), Time.deltaTime);
-            point.transform.localPosition = Vector3.Lerp(point.transform.localPosition, new Vector3(0, 5.5f, 0), Time.deltaTime);
+            point.fontSize = Mathf.Lerp(point.fontSize, 1000, Time.deltaTime);
             counter += Time.deltaTime;
         }
     }

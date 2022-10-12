@@ -29,19 +29,16 @@ public class SlidingState : MoveState {
     public override void OnUpdate() {
         Vector3 velocity;
 
-        //move
         Vector3 downDir = Vector3.Cross(Vector3.Cross(Vector3.up, owner.evaluator.GetSlopeNormal()), owner.evaluator.GetSlopeNormal());
-
         currentDir = Vector3.Lerp(currentDir, downDir, 1f * Time.deltaTime);
 
         velocity = currentDir * owner.slideSpeed;
-
         owner.velocity = velocity;
 
         //jump 
-        if (Input.GetKeyDown(KeyCode.Space)) {
+        if (Input.GetKeyDown(KeyCode.Space) && !owner.evaluator.TouchedRoof()) {
             owner.animator.SetBool("Sliding", false);
-            owner.animator.SetTrigger("Jump");
+            owner.animator.SetBool("Jump", true);
             owner.velocity += new Vector3(0, Mathf.Sqrt(owner.jumpHeight * -2 * owner.gravity), 0);
         }
 

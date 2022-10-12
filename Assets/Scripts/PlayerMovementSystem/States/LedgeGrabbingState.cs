@@ -18,6 +18,8 @@ public class LedgeGrabbingState : MoveState {
         owner.lookAtMoveDir = false;
         owner.velocity = Vector3.zero;
 
+        owner.sprinting = false;
+
         Ledge = owner.CurrentLedge;
 
         owner.animator.SetBool("HangingFromEdge", true);
