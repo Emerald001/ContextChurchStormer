@@ -9,6 +9,8 @@ public class EnemyAI : MonoBehaviour
     public Vector3[] Angles;
     public GameObject player;
     public GameObject exclamationPoint;
+    public GameObject takeDown;
+    public Animator animator;
     public float speed;
     public float rotSpeed;
     public float walkingRange;
@@ -45,6 +47,17 @@ public class EnemyAI : MonoBehaviour
 
     void Update() {
         enemyStateMachine.OnUpdate();
+
+        if (evaluator.PlayerBehind(player)) {
+            takeDown.SetActive(true);
+
+            if (Input.GetKeyDown(KeyCode.E)) {
+                Destroy(gameObject);
+            }
+        }
+        else {
+            takeDown.SetActive(false);
+        }
     }
 
     public void AddTransitionWithKey(State<EnemyAI> state, KeyCode keyCode, System.Type stateTo) {
@@ -66,5 +79,9 @@ public class EnemyAI : MonoBehaviour
     }
     public void AddTransitionWithPrediquete(State<EnemyAI> state, System.Predicate<EnemyAI> predicate, System.Type stateTo) {
         state.AddTransition(new Transition<EnemyAI>(predicate, stateTo));
+    }
+
+    public IEnumerator TakeDown() {
+        yield return new WaitForEndOfFrame();
     }
 }

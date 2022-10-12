@@ -23,6 +23,8 @@ public class PlayerCaptureState : EnemyState {
 
         point.SetActive(true);
         agent.speed = 5;
+
+        owner.animator.SetBool("Looking", true);
     }
 
     public override void OnExit() {
@@ -34,13 +36,18 @@ public class PlayerCaptureState : EnemyState {
         point.transform.localScale = new Vector3(0.001f, .001f, .001f);
         point.transform.localPosition = new Vector3(0, 2.8f, 0);
         counter = 0;
+
+        owner.animator.SetBool("Looking", false);
+        owner.animator.SetBool("Sprinting", false);
     }
 
     public override void OnUpdate() {
         base.OnUpdate();
          
-        if (counter > 3)
+        if (counter > 3) {
+            owner.animator.SetBool("Sprinting", true);
             agent.SetDestination(Player.transform.position);
+        }
         else {
             point.transform.localScale = Vector3.Lerp(point.transform.localScale, new Vector3(.005f, .005f, .005f), Time.deltaTime);
             point.transform.localPosition = Vector3.Lerp(point.transform.localPosition, new Vector3(0, 5.5f, 0), Time.deltaTime);

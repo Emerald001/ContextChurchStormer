@@ -11,11 +11,16 @@ public class AirbornState : MoveState {
     }
 
     public override void OnEnter() {
+        owner.lookAtMoveDir = true;
+
+        owner.animator.SetBool("HangingFromEdge", false);
+        owner.animator.SetBool("Falling", true);
         doubleJumps = owner.jumpAmount;
     }
 
     public override void OnExit() {
-
+        owner.animator.SetBool("Falling", false);
+        owner.animator.SetTrigger("TouchedGround");
     }
 
     public override void OnUpdate() {
@@ -23,7 +28,8 @@ public class AirbornState : MoveState {
         owner.velocity.z *= owner.airDrag;
 
         //inputs
-        Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+        Vector3 input = new(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        input = input.normalized;
 
         owner.velocity += (owner.YRotationParent.right * input.x + owner.YRotationParent.forward * input.z) * owner.airbornSpeed;
         owner.velocity.x = Mathf.Clamp(owner.velocity.x, -owner.maxSpeed, owner.maxSpeed);

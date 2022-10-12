@@ -9,24 +9,24 @@ public class CrouchingState : MoveState
     }
 
     public override void OnEnter() {
-        owner.animator.SetTrigger("Switch");
-
         owner.controller.height = 1;
         owner.controller.center = new Vector3(0, .5f, 0);
+
+        owner.animator.SetBool("Crouching", true);
     }
 
     public override void OnExit() {
-        owner.animator.SetTrigger("Switch");
-
         owner.controller.height = 2;
         owner.controller.center = new Vector3(0, 1, 0);
+
+        owner.animator.SetBool("Crouching", false);
     }
 
     public override void OnUpdate() {
         Vector3 velocity = Vector3.zero;
 
         //inputs
-        Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        Vector3 input = new(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
 
         //move
         var movedir = owner.SlopeTransform.TransformDirection(input.normalized);
@@ -36,6 +36,12 @@ public class CrouchingState : MoveState
             owner.animator.SetBool("Walking", true);
         else
             owner.animator.SetBool("Walking", false);
+
+        //jump 
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            owner.animator.SetTrigger("Jump");
+            owner.velocity += new Vector3(0, Mathf.Sqrt(owner.jumpHeight * -2 * owner.gravity), 0);
+        }
 
         owner.velocity = Vector3.MoveTowards(owner.velocity, velocity, owner.Acceleration * Time.deltaTime);
 

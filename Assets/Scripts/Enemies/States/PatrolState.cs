@@ -26,9 +26,12 @@ public class PatrolState : EnemyState {
             index = 0;
 
         agent.SetDestination(positions[index].position);
+        owner.animator.SetBool("Walking", true);
     }
 
     public override void OnExit() {
+        owner.animator.SetBool("Walking", false);
+
         IsDone = false;
     }
 
