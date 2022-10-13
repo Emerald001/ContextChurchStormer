@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -67,8 +68,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         if (evaluator.GotPlayer(player)) {
-            animator.SetBool("TakeDown", true);
-            Debug.Log("Lost");
+            StartCoroutine(endGame());
         }
     }
 
@@ -91,5 +91,16 @@ public class EnemyAI : MonoBehaviour
     }
     public void AddTransitionWithPrediquete(State<EnemyAI> state, System.Predicate<EnemyAI> predicate, System.Type stateTo) {
         state.AddTransition(new Transition<EnemyAI>(predicate, stateTo));
+    }
+
+    public IEnumerator endGame() {
+        Debug.Log("Got you!");
+        animator.SetBool("TakeDown", true);
+        player.GetComponent<MovementManager>().animator.SetBool("Dies", true);
+        player.GetComponent<MovementManager>().isAlive = false;
+
+        yield return new WaitForSeconds(3f);
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

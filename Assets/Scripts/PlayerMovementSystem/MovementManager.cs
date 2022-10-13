@@ -47,6 +47,7 @@ public class MovementManager : MonoBehaviour
     [HideInInspector] public bool sprinting;
     [HideInInspector] public bool lookAtMoveDir = true;
     [HideInInspector] public GameObject CurrentLedge = null;
+    [HideInInspector] public bool isAlive = true;
 
     void Start() {
         controller = GetComponent<CharacterController>();
@@ -161,6 +162,9 @@ public class MovementManager : MonoBehaviour
     }
 
     void Update() {
+        if (!isAlive)
+            return;
+
         movementStateMachine.OnUpdate();
 
         SlopeTransform.rotation = Quaternion.FromToRotation(SlopeTransform.up, evaluator.GetSlopeNormal()) * SlopeTransform.rotation;
